@@ -35,8 +35,12 @@ Request:
 * `eventType`: required, unique, non-empty
 * `maxEvents`: integer > 0
 * `perMillis`: integer > 0
-* Duplicate configuration → 409
-* Invalid input → 400
+
+**Expected Status Codes:**
+
+* `200` → Rule created successfully
+* `400` → Invalid input (missing/empty eventType, maxEvents ≤ 0, perMillis ≤ 0)
+* `409` → Duplicate configuration (eventType already exists)
 
 ## 2. Evaluate Event
 
@@ -64,20 +68,34 @@ or
 
 **Rules:**
 
-* If `eventType` not configured → 404
 * `timestamp` must be > 0
 * Evaluation must consider only the applicable time window
 * Outdated event timestamps must not affect decisions
+
+**Expected Status Codes:**
+
+* `200 `→ Event evaluated successfully (either allowed or blocked)
+* `400` → Invalid input (timestamp ≤ 0)
+* `404` → eventType not configured
 
 ## 3. List Rules
 
 **GET /limits**
 Returns all the rules.
 
+**Expected Status Codes:**
+
+* `200` → Returns all configured rules
+
 ## 4. Delete Rule
 
 **DELETE /limits/{eventType}**
 Deletes the rule and clears associated event history.
+
+**Expected Status Codes:**
+
+* `200` → Rule deleted successfully
+* `404` → Rule not found
 
 # Constraints
 
